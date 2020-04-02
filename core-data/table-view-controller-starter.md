@@ -12,6 +12,7 @@ class ItemsViewController: UITableViewController {
 
     var items = (1...20).map({"Item \($0)"})
 
+    // MARK: - View Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -23,7 +24,6 @@ class ItemsViewController: UITableViewController {
     }
 
     // MARK: - Actions
-
     @objc func refreshControlValueChanged(_ sender: UIRefreshControl) {
         tableView.reloadData()
         tableView.refreshControl?.endRefreshing()
