@@ -5,19 +5,18 @@
 ## UserDefaults
 
 * [Untitled](userdefaults/untitled.md)
-* [Untitled](userdefaults/untitled-1.md)
 
 ## File System
 
 * [Untitled](file-system/untitled.md)
 
+## Core Data
+
+* [Core Data Stack](core-data/untitled.md)
+
 ## iCloud
 
 * [Untitled](icloud/untitled.md)
-
-## Core Data
-
-* [Untitled](core-data/untitled.md)
 
 ## Firebase
 
