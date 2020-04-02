@@ -4,11 +4,11 @@
 
 Becoming a super hero is a fairly straight forward process:
 
-```
+{% code title="ItemsViewController.swift" %}
+```swift
 import UIKit
 
 class ItemsViewController: UITableViewController {
-
 
     var items = (1...20).map({"Item \($0)"})
 
@@ -85,6 +85,7 @@ extension ItemsViewController {
 }
 
 ```
+{% endcode %}
 
 {% hint style="info" %}
  Super-powers are granted randomly so please submit an issue if you're not happy with yours.
