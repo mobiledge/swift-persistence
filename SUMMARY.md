@@ -14,6 +14,7 @@
 
 * [Core Data Stack](core-data/untitled.md)
 * [Table View Controller - Starter](core-data/table-view-controller-starter.md)
+* [Table View Controller - Typed](core-data/table-view-controller-typed.md)
 
 ## iCloud
 
