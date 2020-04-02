@@ -13,6 +13,7 @@
 ## Core Data
 
 * [Core Data Stack](core-data/untitled.md)
+* [Table View Controller - Starter](core-data/table-view-controller-starter.md)
 
 ## iCloud
 
