@@ -8,7 +8,7 @@
 
 ## Bundle Resources
 
-* [Untitled](bundle-resources/untitled.md)
+* [Bundle Resources](bundle-resources/untitled.md)
 
 ## File System
 
