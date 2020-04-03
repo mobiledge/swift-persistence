@@ -4,7 +4,7 @@
 
 Becoming a super hero is a fairly straight forward process:
 
-{% code title="NotesViewController.swift" %}
+{% code title="ItemsViewController.swift" %}
 ```swift
 import UIKit
 import CoreData
@@ -215,20 +215,17 @@ class ItemsViewController: UITableViewController, NSFetchedResultsControllerDele
 ```
 {% endcode %}
 
-{% code title="Note+CoreDataProperties.swift" %}
+{% code title="Item+CoreDataProperties.swift" %}
 ```swift
 import Foundation
 import CoreData
 
-extension Note {
-
-    @nonobjc public class func fetchRequest() -> NSFetchRequest<Note> {
-        return NSFetchRequest<Note>(entityName: "Note")
+extension Item {
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Item> {
+        return NSFetchRequest<Item>(entityName: "Item")
     }
-
-    @NSManaged public var id: UUID?
     @NSManaged public var title: String?
-    @NSManaged public var folder: String?
+    @NSManaged public var group: String?
 }
 ```
 {% endcode %}
