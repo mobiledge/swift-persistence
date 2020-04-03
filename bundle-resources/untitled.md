@@ -13,6 +13,7 @@ class BundleHelper {
 
     static func loadFromBundle<T: Codable>(resource: String, withExtension ext: String) -> T? {
         guard let url = Bundle.main.url(forResource: resource, withExtension: ext) else {
+            print("Couldn't find resource.")
             return nil
         }
         do {
