@@ -12,9 +12,11 @@
 
 ## Core Data
 
-* [Core Data Stack](core-data/untitled.md)
-* [Table View Controller - Starter](core-data/table-view-controller-starter.md)
-* [Table View Controller - Typed](core-data/table-view-controller-typed.md)
+* [Core Data Helpers](core-data/untitled.md)
+* [Table View - Starter](core-data/table-view-controller-starter.md)
+* [Table View - Typed](core-data/table-view-controller-typed.md)
+* [Table View - Fetch Request](core-data/table-view-controller-fetch-request.md)
+* [Table View - Fetched Results Controller](core-data/table-view-fetched-results-controller.md)
 
 ## iCloud
 

@@ -1,4 +1,4 @@
-# Table View - Typed
+# Table View - Fetch Request
 
 ## Getting Super Powers
 
@@ -6,11 +6,13 @@ Becoming a super hero is a fairly straight forward process:
 
 {% code title="ItemsViewController.swift" %}
 ```swift
+import CoreData
 import UIKit
 
 class ItemsViewController: UITableViewController {
 
     var items = [Item]()
+    static var maxCount = 0
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,7 +28,15 @@ class ItemsViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        fetchAll()
+
+        // MARK: - CRUD - Fetch All
+
+        // 1. Reload Data
+        let req: NSFetchRequest<Item> = Item.fetchRequest()
+        items = fetch(req)
+
+        // 2. Reload UI
+        tableView.reloadData()
     }
 
     // MARK: - Actions
@@ -37,16 +47,21 @@ class ItemsViewController: UITableViewController {
     }
 
     @objc func addBarButtonTouched(_ sender: UIBarButtonItem) {
-        let item = Item(title: "Item \(items.count+1)")
-        items.insert(item, at: 0)
-        tableView.insertRows(at: [IndexPath(row: 0, section: 0)], with: .automatic)
-    }
 
-    // MARK: - CRUD
-    func fetchAll() {
-        let all = Item.all()
-        let sorted = all.sorted(by: {$0.created > $1.created})
-        items = sorted
+        // MARK: - CRUD - Create
+
+        // 1. Create Item
+        let item = Item(context: context)
+        Self.maxCount += 1
+        item.title = "Item \(Self.maxCount)"
+        save()
+
+        // 2. Reload Data
+        let req: NSFetchRequest<Item> = Item.fetchRequest()
+        items = fetch(req)
+
+        // 3. Reload UI
+        tableView.reloadData()
     }
 }
 
@@ -64,7 +79,7 @@ extension ItemsViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell", for: indexPath)
         let item = items[indexPath.row]
-        cell.textLabel?.text = item.title + " - " + item.formattedCreated
+        cell.textLabel?.text = item.title
         return cell
     }
 
@@ -75,7 +90,17 @@ extension ItemsViewController {
 
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
+
+            // MARK: - CRUD - Delete
+
+            // 1. Delete Item
+            let item = items[indexPath.row]
+            delete(item)
+
+            // 2. Update Data
             items.remove(at: indexPath.row)
+
+            // 3. Update UI
             tableView.deleteRows(at: [indexPath], with: .fade)
         }
         else if editingStyle == .insert {
@@ -99,28 +124,18 @@ extension ItemsViewController {
 
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
 
-struct Item {
-    let id = UUID()
-    let created = Date()
-    let title: String
+        //MARK: - CRUD - Update
 
-    static func all() -> [Item] {
-        (1...20).map({Item(title: "Item \($0)")})
-    }
+        // 1. Update Item
+        let item = items[indexPath.row]
+        Self.maxCount += 1
+        item.title = "Item \(Self.maxCount)"
+        save()
 
-    // Formatted
-    static let formatter: DateFormatter = {
-        let f = DateFormatter()
-        f.dateStyle = .none
-        f.timeStyle = .medium
-        return f
-    }()
+        // 2. Reload UI
+        tableView.reloadRows(at: [indexPath], with: .automatic)
 
-    var formattedCreated: String {
-        Self.formatter.string(from: created)
     }
 }
 

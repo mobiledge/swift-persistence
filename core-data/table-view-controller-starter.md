@@ -1,4 +1,4 @@
-# Table View Controller - Starter
+# Table View - Starter
 
 ## Getting Super Powers
 

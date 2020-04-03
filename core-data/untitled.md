@@ -1,4 +1,4 @@
-# Core Data Stack
+# Core Data Helpers
 
 ## Getting Super Powers
 
@@ -7,7 +7,7 @@ Becoming a super hero is a fairly straight forward process:
 {% code title="CoreDataStack.swift" %}
 ```swift
 import CoreData
-import Foundation
+import UIKit
 
 class CoreDataStack {
 
@@ -18,8 +18,6 @@ class CoreDataStack {
     init(model: String) {
         self.model = model
     }
-
-    // MARK: - Core Data stack
 
     lazy var context: NSManagedObjectContext = {
         self.persistentContainer.viewContext
@@ -51,12 +49,26 @@ class CoreDataStack {
         })
         return container
     }()
+}
+```
+{% endcode %}
 
+{% code title="CoreDataStack+CRUD.swift" %}
+```swift
+extension CoreDataStack {
 
-    // MARK: - Core Data Saving support
+    func fetch<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>) -> [T]  {
+        do {
+            let items = try context.fetch(request)
+            return items
+        }
+        catch let error as NSError {
+            print("Could not fetch \(error), \(error.userInfo)")
+            return [T]()
+        }
+    }
 
-    func saveContext () {
-        let context = persistentContainer.viewContext
+    func save() {
         if context.hasChanges {
             do {
                 try context.save()
@@ -64,6 +76,35 @@ class CoreDataStack {
                 print("Unresolved error \(error), \(error.userInfo)")
             }
         }
+    }
+
+    func delete(_ item: NSManagedObject) {
+        context.delete(item)
+    }
+}
+```
+{% endcode %}
+
+{% code title="UIViewController+CoreDataStack.swift" %}
+```swift
+extension UIViewController {
+
+    var context: NSManagedObjectContext {
+        CoreDataStack.shared.context
+    }
+
+    // MARK: - CRUD
+
+    func fetch<T: NSFetchRequestResult>(_ request: NSFetchRequest<T>) -> [T]  {
+        CoreDataStack.shared.fetch(request)
+    }
+
+    func save() {
+        CoreDataStack.shared.save()
+    }
+
+    func delete(_ item: NSManagedObject) {
+        CoreDataStack.shared.delete(item)
     }
 }
 ```
