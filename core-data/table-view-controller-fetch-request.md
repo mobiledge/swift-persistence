@@ -1,4 +1,4 @@
-# Table View - Fetch Request
+# Fetch Request
 
 ## Getting Super Powers
 

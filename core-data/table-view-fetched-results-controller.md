@@ -1,4 +1,4 @@
-# Table View - Fetched Results Controller
+# Fetched Results Controller
 
 ## Getting Super Powers
 
