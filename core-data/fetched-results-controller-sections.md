@@ -9,7 +9,7 @@ Becoming a super hero is a fairly straight forward process:
 import UIKit
 import CoreData
 
-class NotesViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class ItemsViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 
     var detailViewController: DetailViewController? = nil
     var managedObjectContext: NSManagedObjectContext? = nil
@@ -17,6 +17,11 @@ class NotesViewController: UITableViewController, NSFetchedResultsControllerDele
 
     override func viewDidLoad() {
         super.viewDidLoad()
+
+        refreshControl = UIRefreshControl()
+        refreshControl?.addTarget(self, action: #selector(refreshControlValueChanged(_:)), for: .valueChanged)
+
+
         // Do any additional setup after loading the view.
         navigationItem.leftBarButtonItem = editButtonItem
 
@@ -49,19 +54,25 @@ class NotesViewController: UITableViewController, NSFetchedResultsControllerDele
     }
 
     // MARK: - Actions
+
+    @objc func refreshControlValueChanged(_ sender: UIRefreshControl) {
+        tableView.refreshControl?.endRefreshing()
+        tableView.reloadData()
+    }
+
     @objc func showAlert() {
 
-        let alertController = UIAlertController(title: "New Note", message: "Add a new note", preferredStyle: .alert)
+        let alertController = UIAlertController(title: "New Item", message: "Add a new note", preferredStyle: .alert)
         alertController.addTextField { textField in
-            textField.placeholder = "Note"
+            textField.placeholder = "Item"
         }
         alertController.addTextField { textField in
-            textField.placeholder = "Folder"
+            textField.placeholder = "Group"
         }
         let saveAction = UIAlertAction(title: "Save", style: .default) { [unowned self] action in
             guard let note = alertController.textFields?.first?.text else { return }
-            let folder = alertController.textFields?.last?.text
-            self.createNote(title: note, folder: folder)
+            let group = alertController.textFields?.last?.text
+            self.createItem(title: note, group: group)
         }
         alertController.addAction(saveAction)
         alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
@@ -69,14 +80,11 @@ class NotesViewController: UITableViewController, NSFetchedResultsControllerDele
     }
 
     // MARK: - CRUD
-    func createNote(title: String, folder: String?) {
+    func createItem(title: String, group: String?) {
         let context = self.fetchedResultsController.managedObjectContext
-        let newNote = Note(context: context)
-
-        // If appropriate, configure the new managed object.
-        newNote.id = UUID()
-        newNote.title = title
-        newNote.folder = folder
+        let newItem = Item(context: context)
+        newItem.title = title
+        newItem.group = group
 
         // Save the context.
         do {
@@ -108,7 +116,7 @@ class NotesViewController: UITableViewController, NSFetchedResultsControllerDele
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         let note = fetchedResultsController.object(at: indexPath)
-        configureCell(cell, withNote: note)
+        configureCell(cell, withItem: note)
         return cell
     }
 
@@ -117,15 +125,11 @@ class NotesViewController: UITableViewController, NSFetchedResultsControllerDele
         return true
     }
 
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-
     override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if editingStyle == .delete {
             let context = fetchedResultsController.managedObjectContext
             context.delete(fetchedResultsController.object(at: indexPath))
-                
+
             do {
                 try context.save()
             } catch {
@@ -135,29 +139,38 @@ class NotesViewController: UITableViewController, NSFetchedResultsControllerDele
         }
     }
 
-    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
     }
 
-    func configureCell(_ cell: UITableViewCell, withNote note: Note) {
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        guard let sectionInfo = fetchedResultsController.sections?[destinationIndexPath.section] else {
+            fatalError()
+        }
+        let newGroup = sectionInfo.name
+        let item = fetchedResultsController.object(at: sourceIndexPath)
+        item.group = newGroup
+    }
+
+    func configureCell(_ cell: UITableViewCell, withItem note: Item) {
         cell.textLabel!.text = note.title
     }
 
     // MARK: - Fetched results controller
 
-    var fetchedResultsController: NSFetchedResultsController<Note> {
+    var fetchedResultsController: NSFetchedResultsController<Item> {
         if _fetchedResultsController != nil {
             return _fetchedResultsController!
         }
-        
-        let fetchRequest: NSFetchRequest<Note> = Note.fetchRequest()
+
+        let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
         fetchRequest.fetchBatchSize = 20
-        let sortDescriptor = NSSortDescriptor(key: #keyPath(Note.folder), ascending: false)
+        let sortDescriptor = NSSortDescriptor(key: #keyPath(Item.group), ascending: false)
         fetchRequest.sortDescriptors = [sortDescriptor]
-        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: #keyPath(Note.folder), cacheName: "Master")
+        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: #keyPath(Item.group), cacheName: "Master")
         aFetchedResultsController.delegate = self
         _fetchedResultsController = aFetchedResultsController
-        
+
         do {
             try _fetchedResultsController!.performFetch()
         } catch {
@@ -165,8 +178,8 @@ class NotesViewController: UITableViewController, NSFetchedResultsControllerDele
              fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
         }
         return _fetchedResultsController!
-    }    
-    var _fetchedResultsController: NSFetchedResultsController<Note>? = nil
+    }
+    var _fetchedResultsController: NSFetchedResultsController<Item>? = nil
 
     func controllerWillChangeContent(_ controller: NSFetchedResultsController<NSFetchRequestResult>) {
         tableView.beginUpdates()
@@ -190,12 +203,8 @@ class NotesViewController: UITableViewController, NSFetchedResultsControllerDele
             case .delete:
                 tableView.deleteRows(at: [indexPath!], with: .fade)
             case .update:
-                configureCell(tableView.cellForRow(at: indexPath!)!, withNote: anObject as! Note)
-            case .move:
-                configureCell(tableView.cellForRow(at: indexPath!)!, withNote: anObject as! Note)
-                tableView.moveRow(at: indexPath!, to: newIndexPath!)
-            default:
-                return
+                configureCell(tableView.cellForRow(at: indexPath!)!, withItem: anObject as! Item)
+            default: break
         }
     }
 
