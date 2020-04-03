@@ -153,16 +153,22 @@ extension ItemsViewController: NSFetchedResultsControllerDelegate {
 ```
 {% endcode %}
 
-{% hint style="info" %}
- Super-powers are granted randomly so please submit an issue if you're not happy with yours.
-{% endhint %}
+{% code title="Item+CoreDataProperties.swift" %}
+```swift
+import Foundation
+import CoreData
 
-Once you're strong enough, save the world:
+extension Item {
 
-{% code title="hello.sh" %}
-```bash
-# Ain't no code for that yet, sorry
-echo 'You got to trust me on this, I saved the world'
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Item> {
+        return NSFetchRequest<Item>(entityName: "Item")
+    }
+
+    @NSManaged public var id: UUID?
+    @NSManaged public var title: String?
+    @NSManaged public var group: String?
+    @NSManaged public var count: Int64
+}
 ```
 {% endcode %}
 
