@@ -35,7 +35,7 @@ class BundleHelper {
 ```swift
 /**
  Loads a BundleLoadable type from bundle.
- File name nust be same as the classname.
+ File name must be same as the classname.
  File extension must be 'json'.
  */
 protocol BundleLoadable: Codable {
