@@ -17,8 +17,6 @@
 ## Core Data
 
 * [Core Data Helpers](core-data/untitled.md)
-* [Table View - Starter](core-data/table-view-controller-starter.md)
-* [Table View - Typed](core-data/table-view-controller-typed.md)
 * [Fetch Request](core-data/table-view-controller-fetch-request.md)
 * [Fetched Results Controller](core-data/table-view-fetched-results-controller.md)
 * [Fetched Results Controller - Sections](core-data/fetched-results-controller-sections.md)
@@ -34,4 +32,9 @@
 ## AWS
 
 * [Untitled](aws/untitled.md)
+
+## Table Views
+
+* [Table View - Starter](table-views/table-view-controller-starter.md)
+* [Table View - Typed](table-views/table-view-controller-typed.md)
 
