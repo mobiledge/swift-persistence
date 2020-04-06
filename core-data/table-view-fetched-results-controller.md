@@ -159,16 +159,13 @@ import Foundation
 import CoreData
 
 extension Item {
-
     @nonobjc public class func fetchRequest() -> NSFetchRequest<Item> {
         return NSFetchRequest<Item>(entityName: "Item")
     }
-
-    @NSManaged public var id: UUID?
     @NSManaged public var title: String?
-    @NSManaged public var group: String?
-    @NSManaged public var count: Int64
+    @NSManaged public var id: UUID?
 }
+
 ```
 {% endcode %}
 
