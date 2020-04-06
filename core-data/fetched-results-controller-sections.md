@@ -6,14 +6,22 @@ Becoming a super hero is a fairly straight forward process:
 
 {% code title="ItemsViewController.swift" %}
 ```swift
-import UIKit
 import CoreData
+import UIKit
 
-class ItemsViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class ItemsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
 
-    var detailViewController: DetailViewController? = nil
-    var managedObjectContext: NSManagedObjectContext? = nil
-
+    var group: Group {
+        if let _group = _group {
+            return _group
+        }
+        let group = Group(context: context)
+        group.id = UUID()
+        group.title = "Group 4"
+        _group = group
+        return group
+    }
+    var _group: Group?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,80 +29,24 @@ class ItemsViewController: UITableViewController, NSFetchedResultsControllerDele
         refreshControl = UIRefreshControl()
         refreshControl?.addTarget(self, action: #selector(refreshControlValueChanged(_:)), for: .valueChanged)
 
-
-        // Do any additional setup after loading the view.
-        navigationItem.leftBarButtonItem = editButtonItem
-
-        let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(showAlert))
-        navigationItem.rightBarButtonItem = addButton
-        if let split = splitViewController {
-            let controllers = split.viewControllers
-            detailViewController = (controllers[controllers.count-1] as! UINavigationController).topViewController as? DetailViewController
-        }
-    }
-
-    override func viewWillAppear(_ animated: Bool) {
-        clearsSelectionOnViewWillAppear = splitViewController!.isCollapsed
-        super.viewWillAppear(animated)
-    }
-
-    // MARK: - Segues
-
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "showDetail" {
-            if let indexPath = tableView.indexPathForSelectedRow {
-            let object = fetchedResultsController.object(at: indexPath)
-                let controller = (segue.destination as! UINavigationController).topViewController as! DetailViewController
-                controller.detailItem = object
-                controller.navigationItem.leftBarButtonItem = splitViewController?.displayModeButtonItem
-                controller.navigationItem.leftItemsSupplementBackButton = true
-                detailViewController = controller
-            }
-        }
+        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonTouched(_:)))
+        navigationItem.rightBarButtonItem = editButtonItem
     }
 
     // MARK: - Actions
 
     @objc func refreshControlValueChanged(_ sender: UIRefreshControl) {
-        tableView.refreshControl?.endRefreshing()
-        tableView.reloadData()
     }
 
-    @objc func showAlert() {
-
-        let alertController = UIAlertController(title: "New Item", message: "Add a new note", preferredStyle: .alert)
-        alertController.addTextField { textField in
-            textField.placeholder = "Item"
-        }
-        alertController.addTextField { textField in
-            textField.placeholder = "Group"
-        }
-        let saveAction = UIAlertAction(title: "Save", style: .default) { [unowned self] action in
-            guard let note = alertController.textFields?.first?.text else { return }
-            let group = alertController.textFields?.last?.text
-            self.createItem(title: note, group: group)
-        }
-        alertController.addAction(saveAction)
-        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-        present(alertController, animated: true)
-    }
-
-    // MARK: - CRUD
-    func createItem(title: String, group: String?) {
-        let context = self.fetchedResultsController.managedObjectContext
-        let newItem = Item(context: context)
-        newItem.title = title
-        newItem.group = group
-
-        // Save the context.
-        do {
-            try context.save()
-        } catch {
-            // Replace this implementation with code to handle the error appropriately.
-            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
-            let nserror = error as NSError
-            fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
-        }
+    @objc func addBarButtonTouched(_ sender: UIBarButtonItem) {
+        let item = Item(context: context)
+        let id = UUID()
+        let count = fetchedResultsController.fetchedObjects?.count ?? 0
+        let title = "Item \(count + 1)"
+        item.id = id
+        item.title = title
+        item.group = group
+        save()
     }
 
     // MARK: - Table View
@@ -103,20 +55,20 @@ class ItemsViewController: UITableViewController, NSFetchedResultsControllerDele
         return fetchedResultsController.sections?.count ?? 0
     }
 
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        let sectionInfo = fetchedResultsController.sections![section]
+        return sectionInfo.name
+    }
+
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         let sectionInfo = fetchedResultsController.sections![section]
         return sectionInfo.numberOfObjects
     }
 
-    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        let sectionInfo = fetchedResultsController.sections?[section]
-        return sectionInfo?.name
-    }
-
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        let note = fetchedResultsController.object(at: indexPath)
-        configureCell(cell, withItem: note)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "ItemCell", for: indexPath)
+        let item = fetchedResultsController.object(at: indexPath)
+        configureCell(cell, withItem: item)
         return cell
     }
 
@@ -133,27 +85,16 @@ class ItemsViewController: UITableViewController, NSFetchedResultsControllerDele
             do {
                 try context.save()
             } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nserror = error as NSError
                 fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
             }
         }
     }
 
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-
-    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        guard let sectionInfo = fetchedResultsController.sections?[destinationIndexPath.section] else {
-            fatalError()
-        }
-        let newGroup = sectionInfo.name
-        let item = fetchedResultsController.object(at: sourceIndexPath)
-        item.group = newGroup
-    }
-
-    func configureCell(_ cell: UITableViewCell, withItem note: Item) {
-        cell.textLabel!.text = note.title
+    func configureCell(_ cell: UITableViewCell, withItem item: Item) {
+        cell.textLabel!.text = item.title
     }
 
     // MARK: - Fetched results controller
@@ -164,19 +105,33 @@ class ItemsViewController: UITableViewController, NSFetchedResultsControllerDele
         }
 
         let fetchRequest: NSFetchRequest<Item> = Item.fetchRequest()
+
+        // Set the batch size to a suitable number.
         fetchRequest.fetchBatchSize = 20
-        let sortDescriptor = NSSortDescriptor(key: #keyPath(Item.group), ascending: false)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: self.managedObjectContext!, sectionNameKeyPath: #keyPath(Item.group), cacheName: "Master")
+
+        // Edit the sort key as appropriate.
+        let sectionDescriptor = NSSortDescriptor(key: #keyPath(Item.group.title), ascending: false)
+        let cellDescriptor = NSSortDescriptor(key: #keyPath(Item.title), ascending: false)
+        fetchRequest.sortDescriptors = [sectionDescriptor, cellDescriptor]
+
+        // Edit the section name key path and cache name if appropriate.
+        // nil for section name key path means "no sections".
+        let aFetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest,
+                                                                   managedObjectContext: context,
+                                                                   sectionNameKeyPath: #keyPath(Item.group.title),
+                                                                   cacheName: "Master")
         aFetchedResultsController.delegate = self
         _fetchedResultsController = aFetchedResultsController
 
         do {
             try _fetchedResultsController!.performFetch()
         } catch {
+             // Replace this implementation with code to handle the error appropriately.
+             // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
              let nserror = error as NSError
              fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
         }
+
         return _fetchedResultsController!
     }
     var _fetchedResultsController: NSFetchedResultsController<Item>? = nil
@@ -204,7 +159,11 @@ class ItemsViewController: UITableViewController, NSFetchedResultsControllerDele
                 tableView.deleteRows(at: [indexPath!], with: .fade)
             case .update:
                 configureCell(tableView.cellForRow(at: indexPath!)!, withItem: anObject as! Item)
-            default: break
+            case .move:
+                configureCell(tableView.cellForRow(at: indexPath!)!, withItem: anObject as! Item)
+                tableView.moveRow(at: indexPath!, to: newIndexPath!)
+            default:
+                return
         }
     }
 
@@ -225,10 +184,41 @@ extension Item {
         return NSFetchRequest<Item>(entityName: "Item")
     }
     @NSManaged public var title: String?
-    @NSManaged public var group: String?
+    @NSManaged public var id: UUID?
+    @NSManaged public var group: Group?
 }
 ```
 {% endcode %}
 
+{% code title="Group+CoreDataProperties.swift" %}
+```swift
+import Foundation
+import CoreData
 
+extension Group {
+    @nonobjc public class func fetchRequest() -> NSFetchRequest<Group> {
+        return NSFetchRequest<Group>(entityName: "Group")
+    }
+    @NSManaged public var id: UUID?
+    @NSManaged public var title: String?
+    @NSManaged public var items: NSSet?
+}
+
+// MARK: Generated accessors for items
+extension Group {
+
+    @objc(addItemsObject:)
+    @NSManaged public func addToItems(_ value: Item)
+
+    @objc(removeItemsObject:)
+    @NSManaged public func removeFromItems(_ value: Item)
+
+    @objc(addItems:)
+    @NSManaged public func addToItems(_ values: NSSet)
+
+    @objc(removeItems:)
+    @NSManaged public func removeFromItems(_ values: NSSet)
+}
+```
+{% endcode %}
 
