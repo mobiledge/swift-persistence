@@ -2,7 +2,7 @@
 
 ## Getting Super Powers
 
-Becoming a super hero is a fairly straight forward process:
+This code is based on the default XCode template for Master-Detail View Controller with Core Data & Storyboard selected
 
 {% code title="ItemsViewController.swift" %}
 ```swift
