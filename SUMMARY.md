@@ -31,7 +31,6 @@
 * [Authentication](firebase/authentication.md)
 * [Data Persistence](firebase/data-persistence.md)
 * [File Persistence](firebase/file-persistence.md)
-* [Untitled](firebase/untitled.md)
 
 ## AWS
 
