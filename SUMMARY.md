@@ -23,8 +23,8 @@
 
 * [Core Data Helpers](core-data/untitled.md)
 * [Fetch Request](core-data/table-view-controller-fetch-request.md)
-* [Fetched Results Controller](core-data/table-view-fetched-results-controller.md)
-* [Fetched Results Controller - Sections](core-data/fetched-results-controller-sections.md)
+* [Fetched Results Controller](core-data/table-view-fetched-results-controller/README.md)
+  * [Fetched Results Controller - Sections](core-data/table-view-fetched-results-controller/fetched-results-controller-sections.md)
 
 ## iCloud
 
@@ -40,8 +40,8 @@
 
 * [Untitled](aws/untitled.md)
 
-## Table Views
+## Appendix
 
-* [Table View - Starter](table-views/table-view-controller-starter.md)
-* [Table View - Typed](table-views/table-view-controller-typed.md)
+* [Table View - Starter](appendix/table-view-controller-starter/README.md)
+  * [Table View - Typed](appendix/table-view-controller-starter/table-view-controller-typed.md)
 
