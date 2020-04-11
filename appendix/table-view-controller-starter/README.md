@@ -1,4 +1,4 @@
-# Table View - Starter
+# Table View
 
 ## Getting Super Powers
 

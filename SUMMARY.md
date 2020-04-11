@@ -42,6 +42,6 @@
 
 ## Appendix
 
-* [Table View - Starter](appendix/table-view-controller-starter/README.md)
+* [Table View](appendix/table-view-controller-starter/README.md)
   * [Table View - Typed](appendix/table-view-controller-starter/table-view-controller-typed.md)
 
