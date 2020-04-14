@@ -44,5 +44,5 @@
 
 * [Table View](appendix/table-view-controller-starter/README.md)
   * [Editing](appendix/table-view-controller-starter/editable.md)
-  * [Typed](appendix/table-view-controller-starter/table-view-controller-typed.md)
+  * [Search](appendix/table-view-controller-starter/table-view-controller-typed.md)
 
