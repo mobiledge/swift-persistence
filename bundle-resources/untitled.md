@@ -85,6 +85,12 @@ class BundleHelper {
 
 ### Example
 
+```swift
+guard let states = State.loadArrayFromBundle() else {
+        fatalError()
+}
+```
+
 {% code title="State.swift" %}
 ```swift
 import Foundation
