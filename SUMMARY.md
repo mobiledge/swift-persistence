@@ -43,6 +43,7 @@
 ## Appendix
 
 * [Table View](appendix/table-view-controller-starter/README.md)
+  * [Split View](appendix/table-view-controller-starter/split-view.md)
   * [Editing](appendix/table-view-controller-starter/editable.md)
   * [Search](appendix/table-view-controller-starter/table-view-controller-typed.md)
 
