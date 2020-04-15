@@ -42,7 +42,10 @@
 
 ## Appendix
 
-* [Split View](appendix/split-view.md)
+* [Split View](appendix/split-view/README.md)
+  * [In Navigation Controller](appendix/split-view/in-navigation-controller.md)
+  * [Sets Display Mode Button](appendix/split-view/sets-display-mode-button.md)
+  * [Implements Delegate](appendix/split-view/implements-delegate.md)
 * [Table View](appendix/table-view-controller-starter/README.md)
   * [Editing](appendix/table-view-controller-starter/editable.md)
   * [Search](appendix/table-view-controller-starter/table-view-controller-typed.md)
