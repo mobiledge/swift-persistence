@@ -49,5 +49,6 @@
   * [Implements Delegate](appendix/split-view/implements-delegate.md)
 * [Table View](appendix/table-view-controller-starter/README.md)
   * [Editing](appendix/table-view-controller-starter/editable.md)
-  * [Search](appendix/table-view-controller-starter/table-view-controller-typed.md)
+  * [Diffable](appendix/table-view-controller-starter/diffable.md)
+  * [Searching](appendix/table-view-controller-starter/table-view-controller-typed.md)
 

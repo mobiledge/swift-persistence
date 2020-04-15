@@ -1,4 +1,4 @@
-# Search
+# Searching
 
 ## String Array
 
