@@ -1,4 +1,4 @@
-# Fetched Results Controller - Sections
+# Sections
 
 ## Getting Super Powers
 
