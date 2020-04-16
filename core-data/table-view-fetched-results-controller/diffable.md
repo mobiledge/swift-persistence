@@ -10,20 +10,13 @@ class GroupsTableViewController: UITableViewController, NSFetchedResultsControll
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        refreshControl = UIRefreshControl()
-        refreshControl?.addTarget(self, action: #selector(refreshControlValueChanged(_:)), for: .valueChanged)
-
         navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonTouched(_:)))
         navigationItem.rightBarButtonItem = editButtonItem
 
-        tableView.dataSource = diffableDataSource
         performFetch()
     }
 
-
     // MARK: - Actions
-    @objc func refreshControlValueChanged(_ sender: UIRefreshControl) {
-    }
     @objc func addBarButtonTouched(_ sender: UIBarButtonItem) {
         let group = Group(context: context)
         let id = UUID()
@@ -34,9 +27,8 @@ class GroupsTableViewController: UITableViewController, NSFetchedResultsControll
         save()
     }
 
-
     // MARK: - Table View Diffable Data Source
-    lazy var diffableDataSource : UITableViewDiffableDataSource<String, NSManagedObjectID> = {
+    lazy var datasource : UITableViewDiffableDataSource<String, NSManagedObjectID> = {
         return UITableViewDiffableDataSource(tableView: self.tableView) { (tavleView, indexPath, _) -> UITableViewCell? in
             let cell = tavleView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
             let group = self.fetchedResultsController.object(at: indexPath)
@@ -47,7 +39,6 @@ class GroupsTableViewController: UITableViewController, NSFetchedResultsControll
 
     // MARK: - Fetched results controller
     lazy var fetchedResultsController: NSFetchedResultsController<Group> = {
-
         let fetchRequest: NSFetchRequest<Group> = Group.fetchRequest()
         fetchRequest.fetchBatchSize = 20
         let sortDescriptor = NSSortDescriptor(key: "title", ascending: false)
@@ -69,16 +60,14 @@ class GroupsTableViewController: UITableViewController, NSFetchedResultsControll
     }
 
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-
-        let oldsnapshot = diffableDataSource.snapshot()
+        let oldsnapshot = datasource.snapshot()
         let snapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
         if oldsnapshot.itemIdentifiers == snapshot.itemIdentifiers {
             return
         }
-        diffableDataSource.apply(snapshot, animatingDifferences: false)
+        datasource.apply(snapshot, animatingDifferences: false)
     }
 }
-
 ```
 {% endcode %}
 
