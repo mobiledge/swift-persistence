@@ -44,6 +44,7 @@
 ## Appendix
 
 * [Split View](appendix/split-view/README.md)
+  * [Storyboard](appendix/split-view/storyboard.md)
   * [In Navigation Controller](appendix/split-view/in-navigation-controller.md)
   * [Sets Display Mode Button](appendix/split-view/sets-display-mode-button.md)
   * [Implements Delegate](appendix/split-view/implements-delegate.md)
