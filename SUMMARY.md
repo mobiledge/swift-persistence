@@ -26,6 +26,7 @@
 * [Fetched Results Controller](core-data/table-view-fetched-results-controller/README.md)
   * [Sections](core-data/table-view-fetched-results-controller/fetched-results-controller-sections.md)
   * [Diffable](core-data/table-view-fetched-results-controller/diffable.md)
+  * [Predicate](core-data/table-view-fetched-results-controller/predicate.md)
 
 ## iCloud
 
