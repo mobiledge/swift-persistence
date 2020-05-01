@@ -28,7 +28,7 @@ class GroupsTableViewController: UITableViewController, NSFetchedResultsControll
     }
 
     // MARK: - Table View Diffable Data Source
-    lazy var datasource : UITableViewDiffableDataSource<String, NSManagedObjectID> = {
+    lazy var datasource : UITableViewDiffableDataSource<String, Group> = {
         return UITableViewDiffableDataSource(tableView: self.tableView) { (tavleView, indexPath, _) -> UITableViewCell? in
             let cell = tavleView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
             let group = self.fetchedResultsController.object(at: indexPath)
@@ -60,12 +60,10 @@ class GroupsTableViewController: UITableViewController, NSFetchedResultsControll
     }
 
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        let oldsnapshot = datasource.snapshot()
-        let snapshot = snapshot as NSDiffableDataSourceSnapshot<String, NSManagedObjectID>
-        if oldsnapshot.itemIdentifiers == snapshot.itemIdentifiers {
-            return
-        }
-        datasource.apply(snapshot, animatingDifferences: false)
+        var diffable = NSDiffableDataSourceSnapshot<String, Group>()
+        diffable.appendSections(["main"])
+        diffable.appendItems(fetchedResultsController.fetchedObjects ?? [], toSection: "main")
+        datasource.apply(diffable, animatingDifferences: true)
     }
 }
 ```
