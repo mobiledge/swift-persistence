@@ -59,6 +59,7 @@ class GroupsTableViewController: UITableViewController, NSFetchedResultsControll
         }
     }
 
+    // https://forums.developer.apple.com/thread/117568
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
         var diffable = NSDiffableDataSourceSnapshot<String, Group>()
         diffable.appendSections(["main"])
