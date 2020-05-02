@@ -35,7 +35,8 @@
 ## Firebase
 
 * [Authentication](firebase/authentication.md)
-* [Data Persistence](firebase/data-persistence.md)
+* [Firestore Database](firebase/data-persistence.md)
+* [Realtime Database](firebase/realtime-database.md)
 * [File Persistence](firebase/file-persistence.md)
 
 ## AWS
