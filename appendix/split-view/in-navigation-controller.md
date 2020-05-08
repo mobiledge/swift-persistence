@@ -1,4 +1,7 @@
-# In Navigation Controller
+# Display Mode Button Item
+
+* Embeds in Navigation Controller
+* Sets displayModeButtonItem
 
 {% code title="SceneDelegate.swift" %}
 ```swift

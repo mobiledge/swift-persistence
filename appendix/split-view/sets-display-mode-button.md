@@ -1,2 +1,2 @@
-# Sets Display Mode Button
+# Launch with master view
 
