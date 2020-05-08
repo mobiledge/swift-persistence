@@ -48,7 +48,7 @@
 * [Storyboard](appendix/storyboard.md)
 * [Split View](appendix/split-view/README.md)
   * [Basic](appendix/split-view/basic.md)
-  * [Display Mode Button Item](appendix/split-view/in-navigation-controller.md)
+  * [Configure displayModeButtonItem](appendix/split-view/in-navigation-controller.md)
   * [Launch with master view](appendix/split-view/sets-display-mode-button.md)
 * [Table View](appendix/table-view-controller-starter/README.md)
   * [Editing](appendix/table-view-controller-starter/editable.md)
