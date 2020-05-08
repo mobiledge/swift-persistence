@@ -2,6 +2,14 @@
 
 {% code title="SceneDelegate.swift" %}
 ```swift
+//
+//  SceneDelegate.swift
+//  TestSplitView
+//
+//  Created by Rabin Joshi on 2020-05-08.
+//  Copyright © 2020 Rabin Joshi. All rights reserved.
+//
+
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -48,7 +56,11 @@ class MasterViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detail = DetailViewController()
         detail.boy = model[indexPath.row]
-        self.showDetailViewController(detail, sender: self) // *
+        let b = self.splitViewController?.displayModeButtonItem
+        detail.navigationItem.leftBarButtonItem = b // *
+        detail.navigationItem.leftItemsSupplementBackButton = true // *
+        let nav = UINavigationController(rootViewController: detail) // *
+        self.showDetailViewController(nav, sender: self)
     }
 }
 
