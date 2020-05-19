@@ -1,5 +1,7 @@
 # Diffable
 
+[Advances in UI Data Sources](https://developer.apple.com/videos/play/wwdc2019/220/) - [WWDC 2019](https://developer.apple.com/videos/wwdc2019/)
+
 ## Basic
 
 {% code title="StatesViewController.swift" %}
