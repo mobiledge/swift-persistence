@@ -1,11 +1,11 @@
 # Table of contents
 
 * [Initial page](README.md)
+* [The Big Picture](the-big-picture.md)
 
 ## UserDefaults
 
-* [Untitled](userdefaults/untitled.md)
-* [The Big Picture](userdefaults/the-big-picture.md)
+* [User Defaults Persistable Protocol](userdefaults/untitled.md)
 
 ## Bundle Resources
 
