@@ -45,7 +45,7 @@
 
 ## Appendix
 
-* [JSON Serializable Protocol](appendix/json-helpers.md)
+* [JSON](appendix/json-helpers.md)
 * [Storyboard](appendix/storyboard.md)
 * [Split View](appendix/split-view/README.md)
   * [Basic](appendix/split-view/basic.md)
