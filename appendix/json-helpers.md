@@ -1,98 +1,80 @@
-# JSON Helpers
+# JSON Serializable Protocol
 
 
 
-{% code title="JSONHelpers.swift" %}
+{% code title="JSONSerializable.swift" %}
 ```swift
 import UIKit
-import Foundation
-import XCTest
 
+protocol JSONSerializable: Codable {
 
-protocol JSONDictionaryConvertible: JSONDataConvertible {
-    func toJSONDictionary() -> [String: Any]?
-    static func fromJSONDictionary(_ dict: [String: Any]) -> Self?
+    func toJSONString() -> String?
+    static func fromJSONString(_ str: String) -> Self?
+    static func arrayFromJSONString(_ str: String) -> [Self]?
+
+    func serialized() -> [String: Any]?
+    static func deserialize(from dict: [String: Any]) -> Self?
+    static func deserializeArray(from arr: [[String: Any]]) -> [Self]?
+
+    func encoded() -> Data?
+    static func encode(array: [Self]) -> Data?
+    static func decode(from data: Data) -> Self?
+    static func decodeArray(from data: Data) -> [Self]?
 }
 
-extension JSONDictionaryConvertible {
-    func toJSONDictionary() -> [String: Any]? {
-        guard let data = toData() else { return nil }
+extension JSONSerializable {
+
+    // MARK: - String
+    func toJSONString() -> String? {
+        guard let data = encoded() else { return nil }
+        return String(data: data, encoding: .utf8)
+    }
+
+    static func fromJSONString(_ str: String) -> Self? {
+        let data = Data(str.utf8)
+        return decode(from: data)
+    }
+
+    static func arrayFromJSONString(_ str: String) -> [Self]? {
+        let data = Data(str.utf8)
+        return decodeArray(from: data)
+    }
+
+
+    // MARK: - Dictionary
+    func serialized() -> [String: Any]? {
+        guard let data = encoded() else { return nil }
         return try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
     }
 
-    static func fromJSONDictionary(_ dict: [String: Any]) -> Self? {
+    static func deserialize(from dict: [String: Any]) -> Self? {
         guard let data = try? JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed) else { return nil }
-        return fromData(data)
-    }
-}
-
-class JSONDictionaryConvertibleTests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
+        return decode(from: data)
     }
 
-    func testDataConversion() {
-
-        let p1 = Person.any()
-        let dict = p1.toJSONDictionary()!
-        let p2 = Person.fromJSONDictionary(dict)
-
-        XCTAssertEqual(p1, p2)
+    static func deserializeArray(from arr: [[String: Any]]) -> [Self]? {
+        guard let data = try? JSONSerialization.data(withJSONObject: arr, options: .fragmentsAllowed) else { return nil }
+        return decodeArray(from: data)
     }
-}
 
-protocol JSONDataConvertible: Codable {
-    func toData() -> Data?
-    static func fromData(_ data: Data) -> Self?
-}
 
-extension JSONDataConvertible {
-
-    func toData() -> Data? {
+    // MARK: - Data
+    func encoded() -> Data? {
         return try? JSONEncoder().encode(self)
     }
 
-    static func fromData(_ data: Data) -> Self? {
+    static func encode(array: [Self]) -> Data? {
+        return try? JSONEncoder().encode(array)
+    }
+
+    static func decode(from data: Data) -> Self? {
         return try? JSONDecoder().decode(Self.self, from: data)
     }
-}
 
-class JSONDataConvertibleTests: XCTestCase {
-
-    override func setUp() {
-        super.setUp()
-    }
-
-    func testDataConversion() {
-
-        let p1 = Person.any()
-        let data = p1.toData()!
-        let p2 = Person.fromData(data)
-
-        XCTAssertEqual(p1, p2)
+    static func decodeArray(from data: Data) -> [Self]? {
+        return try? JSONDecoder().decode([Self].self, from: data)
     }
 }
-
-struct Person: JSONDataConvertible, JSONDictionaryConvertible {
-    let first: String
-    let last: String
-    let address: String
-
-    static func any() -> Person {
-        return Person(first: "Johnny", last: "Appleseed", address: "1230 Cameron Ave")
-    }
-}
-
-extension Person: Equatable {
-
-    static func == (lhs: Self, rhs: Self) -> Bool {
-        return lhs.first == rhs.first && lhs.last == rhs.last && lhs.address == rhs.address
-    }
-}
-
-JSONDataConvertibleTests.defaultTestSuite.run()
-JSONDictionaryConvertibleTests.defaultTestSuite.run()
 
 ```
 {% endcode %}
