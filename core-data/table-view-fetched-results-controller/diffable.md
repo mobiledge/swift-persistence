@@ -1,54 +1,124 @@
 # Diffable
 
-{% code title="GroupsTableViewController.swift" %}
+{% code title="BoardsViewController.swift" %}
 ```swift
 import CoreData
 import UIKit
 
-class GroupsTableViewController: UITableViewController, NSFetchedResultsControllerDelegate {
+class BoardsViewController: UITableViewController {
+
+    enum Section {
+        case main
+    }
+
+    private lazy var controller: BoardsController = { BoardsController(delegate: self) }()
+    let cellID = "Cell"
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        configureNavBar()
+        configureTableView()
+        controller.reloadData()
+    }
 
-        navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonTouched(_:)))
-        navigationItem.rightBarButtonItem = editButtonItem
+    func configureNavBar() {
+        navigationItem.title = "Boards"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addBarButtonTouched(_:)))
+    }
 
-        performFetch()
+    func configureTableView() {
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: self.cellID)
     }
 
     // MARK: - Actions
     @objc func addBarButtonTouched(_ sender: UIBarButtonItem) {
-        let group = Group(context: context)
-        let id = UUID()
-        let count = fetchedResultsController.fetchedObjects?.count ?? 0
-        let title = "Group \(count + 1)"
-        group.id = id
-        group.title = title
-        save()
+        presentCreateBoardAlert { (board) in
+            if let board = board {
+                print("Board created: \(board.title ?? "")")
+            }
+        }
     }
 
-    // MARK: - Table View Diffable Data Source
-    lazy var datasource : UITableViewDiffableDataSource<String, Group> = {
-        return UITableViewDiffableDataSource(tableView: self.tableView) { (tavleView, indexPath, _) -> UITableViewCell? in
-            let cell = tavleView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-            let group = self.fetchedResultsController.object(at: indexPath)
-            cell.textLabel?.text = group.title
+
+    // MARK: - Data Source
+    lazy var datasource : UITableViewDiffableDataSource<Section, NSManagedObjectID> = {
+        return UITableViewDiffableDataSource(tableView: self.tableView) { (tableView, indexPath, _) -> UITableViewCell? in
+            let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
+            let board = self.controller.fetchedResultsController.object(at: indexPath)
+            cell.textLabel?.text = board.title
             return cell
         }
     }()
+}
 
-    // MARK: - Fetched results controller
-    lazy var fetchedResultsController: NSFetchedResultsController<Group> = {
-        let fetchRequest: NSFetchRequest<Group> = Group.fetchRequest()
-        fetchRequest.fetchBatchSize = 20
-        let sortDescriptor = NSSortDescriptor(key: "title", ascending: false)
-        fetchRequest.sortDescriptors = [sortDescriptor]
-        let fetchedResultsController = NSFetchedResultsController(fetchRequest: fetchRequest, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: "Master")
-        fetchedResultsController.delegate = self
+
+// MARK: - BoardCRUD
+extension BoardsViewController: NSFetchedResultsControllerDelegate {
+
+    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
+        datasource.apply(snapshot as NSDiffableDataSourceSnapshot<BoardsViewController.Section, NSManagedObjectID>, animatingDifferences: true)
+    }
+}
+
+
+// MARK: - BoardCRUD
+extension BoardsViewController: BoardCRUD {}
+
+```
+{% endcode %}
+
+{% code title="BoardsController.swift" %}
+```swift
+import CoreData
+import UIKit
+
+class BoardsController: NSObject {
+
+    weak var delegate: NSFetchedResultsControllerDelegate?
+    var boards: [Board] {
+        return fetchedResultsController.fetchedObjects ?? [Board]()
+    }
+
+    init(delegate: NSFetchedResultsControllerDelegate) {
+        self.delegate = delegate
+    }
+
+    lazy var fetchedResultsController: NSFetchedResultsController<Board>  = {
+
+        // 1. Fetch Request
+        let request: NSFetchRequest<Board> = Board.fetchRequest()
+
+        // 2. Sort Descriptor
+        let primary = NSSortDescriptor(key: "title", ascending: true)
+        request.sortDescriptors = [primary]
+
+        // 3. Context
+        let context = CoreDataStack.shared.context
+
+        // 4. Fetched Results Controller
+        let fetchedResultsController = NSFetchedResultsController(fetchRequest: request, managedObjectContext: context, sectionNameKeyPath: nil, cacheName: nil)
+        fetchedResultsController.delegate = self.delegate
         return fetchedResultsController
     }()
 
-    func performFetch() {
+
+    // MARK: - Fetch
+    func reloadData() {
+        let predicate = NSPredicate(value: true)
+        reloadData(predicate: predicate)
+    }
+
+    func reloadData(searchText: String) {
+        let predicate = NSPredicate(format: "title BEGINSWITH %@", searchText)
+        reloadData(predicate: predicate)
+    }
+
+    func reloadData(predicate: NSPredicate) {
+
+        // 1. Update Predicate
+        fetchedResultsController.fetchRequest.predicate = predicate
+
+        // 2. Perform Fetch
         do {
             try fetchedResultsController.performFetch()
         } catch {
@@ -58,17 +128,50 @@ class GroupsTableViewController: UITableViewController, NSFetchedResultsControll
              fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
         }
     }
-
-    // https://forums.developer.apple.com/thread/117568
-    func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChangeContentWith snapshot: NSDiffableDataSourceSnapshotReference) {
-        var diffable = NSDiffableDataSourceSnapshot<String, Group>()
-        diffable.appendSections(["main"])
-        diffable.appendItems(fetchedResultsController.fetchedObjects ?? [], toSection: "main")
-        datasource.apply(diffable, animatingDifferences: true)
-    }
-}
 ```
 {% endcode %}
 
+{% code title="BoardCRUD.swift" %}
+```swift
+import UIKit
 
+protocol BoardCRUD {
+    func createBoard(name: String, completion: @escaping (Board?) -> Void)
+}
+
+extension BoardCRUD {
+
+    func createBoard(name: String, completion: @escaping (Board?) -> Void) {
+        let trimmed = name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.count > 0 else {
+            completion(nil)
+            return
+        }
+        let cd = CoreDataStack.shared
+        let board = Board(context: cd.context)
+        board.id = UUID()
+        board.title = trimmed
+        cd.save()
+        completion(board)
+    }
+}
+
+extension BoardCRUD where Self: UIViewController {
+
+    func presentCreateBoardAlert(completion: @escaping (Board?) -> Void) {
+        let alert = UIAlertController(title: "New Board", message: "What would you like to call this board?", preferredStyle: .alert)
+        alert.addTextField { (textfield) in
+            textfield.placeholder = "Board Name"
+        }
+        alert.addAction(UIAlertAction(title: "Create", style: .default, handler: { (_) in
+            let name = alert.textFields?.first?.text ?? ""
+            self.createBoard(name: name, completion: completion)
+        }))
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+}
+
+```
+{% endcode %}
 
