@@ -1,5 +1,7 @@
 # Launch with Master
 
+* On the iPhone, the app launches with the master view showing \(not the detail view\)
+
 {% code title="SceneDelegate.swift" %}
 ```swift
 //
