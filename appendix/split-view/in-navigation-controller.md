@@ -33,8 +33,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let nav2 = UINavigationController(rootViewController:detail) // *
         svc.viewControllers = [nav1, nav2] // *
         self.window!.rootViewController = svc
+        
         let b = svc.displayModeButtonItem // *
-        detail.navigationItem.leftBarButtonItem = b // * detail.navigationItem.leftItemsSupplementBackButton = true // *
+        detail.navigationItem.leftBarButtonItem = b // * 
+        detail.navigationItem.leftItemsSupplementBackButton = true // *
     }
 }
 
@@ -59,9 +61,11 @@ class MasterViewController: UITableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let detail = DetailViewController()
         detail.boy = model[indexPath.row]
+        
         let b = self.splitViewController?.displayModeButtonItem
         detail.navigationItem.leftBarButtonItem = b // *
         detail.navigationItem.leftItemsSupplementBackButton = true // *
+        
         let nav = UINavigationController(rootViewController: detail) // *
         self.showDetailViewController(nav, sender: self)
     }
