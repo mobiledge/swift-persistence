@@ -49,7 +49,7 @@
 * [Storyboard](appendix/storyboard.md)
 * [Split View](appendix/split-view/README.md)
   * [Basic](appendix/split-view/basic.md)
-  * [Configure displayModeButtonItem](appendix/split-view/in-navigation-controller.md)
+  * [Display Mode](appendix/split-view/in-navigation-controller.md)
   * [Launch with master view](appendix/split-view/sets-display-mode-button.md)
 * [Untitled](appendix/untitled.md)
 * [Table View](appendix/table-view-controller-starter/README.md)

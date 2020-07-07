@@ -1,4 +1,4 @@
-# Configure displayModeButtonItem
+# Display Mode
 
 * Embeds in Navigation Controller
 * Sets displayModeButtonItem
