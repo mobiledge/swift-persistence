@@ -1,4 +1,4 @@
-# Display Mode
+# Display Mode Button
 
 * Embeds in Navigation Controller
 * Sets displayModeButtonItem
