@@ -51,7 +51,6 @@
   * [Basic](appendix/split-view/basic.md)
   * [Display Mode Button](appendix/split-view/in-navigation-controller.md)
   * [Launch with Master](appendix/split-view/sets-display-mode-button.md)
-* [Untitled](appendix/untitled.md)
 * [Table View](appendix/table-view-controller-starter/README.md)
   * [Editing](appendix/table-view-controller-starter/editable.md)
   * [Diffable](appendix/table-view-controller-starter/diffable.md)
