@@ -1,8 +1,10 @@
 # BundleResource
 
-## Getting Super Powers
+* [x] Protocol Implementation
+* [ ] Tests
+* [ ] UI
 
-Becoming a super hero is a fairly straight forward process:
+
 
 {% code title="BundleResource.swift" %}
 ```swift
