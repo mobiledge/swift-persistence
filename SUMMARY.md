@@ -17,7 +17,7 @@
 
 ## Bundle Resources
 
-* [Bundle Resources](bundle-resources/untitled.md)
+* [BundleResource](bundle-resources/untitled.md)
 
 ## File System
 
