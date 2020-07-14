@@ -5,7 +5,11 @@
 
 ## DATA
 
-* [JSON Serialization](data/json-helpers.md)
+* [JSONSerializable](data/json-helpers.md)
+
+## Keychain
+
+* [Untitled](keychain/untitled.md)
 
 ## UserDefaults
 
@@ -18,10 +22,6 @@
 ## File System
 
 * [Untitled](file-system/untitled.md)
-
-## Keychain
-
-* [Untitled](keychain/untitled.md)
 
 ## Core Data
 

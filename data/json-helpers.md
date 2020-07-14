@@ -1,4 +1,4 @@
-# JSON Serialization
+# JSONSerializable
 
 #### JSON Serializable Protocol
 
@@ -10,72 +10,66 @@ protocol JSONSerializable: Codable {
 
     func toJSONString() -> String?
     static func fromJSONString(_ str: String) -> Self?
-    static func arrayFromJSONString(_ str: String) -> [Self]?
+    static func arrayFromJSONString(_ str: String) -> [Self]
 
-    func serialized() -> [String: Any]?
-    static func deserialize(from dict: [String: Any]) -> Self?
-    static func deserializeArray(from arr: [[String: Any]]) -> [Self]?
+    func toJSONDictionary() -> [String: Any]?
+    static func fromJSONDictionary(_ dict: [String: Any]) -> Self?
+    static func arrayFromJSONArray(_ arr: [[String: Any]]) -> [Self]
 
-    func encoded() -> Data?
-    static func encode(array: [Self]) -> Data?
-    static func decode(from data: Data) -> Self?
-    static func decodeArray(from data: Data) -> [Self]?
+    func toJSONData() -> Data?
+    static func fromJSONData(_ data: Data) -> Self?
+    static func arrayFromJSONData(_ data: Data) -> [Self]
 }
 
 extension JSONSerializable {
 
     // MARK: - String
     func toJSONString() -> String? {
-        guard let data = encoded() else { return nil }
+        guard let data = toJSONData() else { return nil }
         return String(data: data, encoding: .utf8)
     }
 
     static func fromJSONString(_ str: String) -> Self? {
         let data = Data(str.utf8)
-        return decode(from: data)
+        return fromJSONData(_: data)
     }
 
-    static func arrayFromJSONString(_ str: String) -> [Self]? {
+    static func arrayFromJSONString(_ str: String) -> [Self] {
         let data = Data(str.utf8)
-        return decodeArray(from: data)
+        return arrayFromJSONData(_: data)
     }
 
 
     // MARK: - Dictionary
-    func serialized() -> [String: Any]? {
-        guard let data = encoded() else { return nil }
+    func toJSONDictionary() -> [String: Any]? {
+        guard let data = toJSONData() else { return nil }
         return try? JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
     }
 
-    static func deserialize(from dict: [String: Any]) -> Self? {
+    static func fromJSONDictionary(_ dict: [String: Any]) -> Self? {
         guard let data = try? JSONSerialization.data(withJSONObject: dict, options: .fragmentsAllowed) else { return nil }
-        return decode(from: data)
+        return fromJSONData(_: data)
     }
 
-    static func deserializeArray(from arr: [[String: Any]]) -> [Self]? {
-        guard let data = try? JSONSerialization.data(withJSONObject: arr, options: .fragmentsAllowed) else { return nil }
-        return decodeArray(from: data)
+    static func arrayFromJSONArray(_ arr: [[String: Any]]) -> [Self] {
+        guard let data = try? JSONSerialization.data(withJSONObject: arr, options: .fragmentsAllowed) else { return [] }
+        return arrayFromJSONData(_: data)
     }
 
 
     // MARK: - Data
-    func encoded() -> Data? {
+    func toJSONData() -> Data? {
         return try? JSONEncoder().encode(self)
     }
 
-    static func encode(array: [Self]) -> Data? {
-        return try? JSONEncoder().encode(array)
-    }
-
-    static func decode(from data: Data) -> Self? {
+    static func fromJSONData(_ data: Data) -> Self? {
         return try? JSONDecoder().decode(Self.self, from: data)
     }
 
-    static func decodeArray(from data: Data) -> [Self]? {
-        return try? JSONDecoder().decode([Self].self, from: data)
+    static func arrayFromJSONData(_ data: Data) -> [Self] {
+        return (try? JSONDecoder().decode([Self].self, from: data)) ?? []
     }
 }
-
 ```
 {% endcode %}
 
