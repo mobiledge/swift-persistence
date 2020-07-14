@@ -1,6 +1,8 @@
 # JSONSerializable
 
-#### JSON Serializable Protocol
+* [x] Protocol Implementation
+* [ ] Tests
+* [ ] UI
 
 {% code title="JSONSerializable.swift" %}
 ```swift
