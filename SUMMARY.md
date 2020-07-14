@@ -3,6 +3,10 @@
 * [Initial page](README.md)
 * [The Big Picture](the-big-picture.md)
 
+## DATA
+
+* [JSON Serialization](data/json-helpers.md)
+
 ## UserDefaults
 
 * [User Defaults](userdefaults/untitled.md)
@@ -45,7 +49,6 @@
 
 ## Appendix
 
-* [JSON](appendix/json-helpers.md)
 * [Storyboard](appendix/storyboard.md)
 * [Split View](appendix/split-view/README.md)
   * [Basic](appendix/split-view/basic.md)
