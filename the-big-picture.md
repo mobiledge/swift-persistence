@@ -7,4 +7,15 @@ TOPICS
 * data perssistence technologies available
 * categories: key-value store, object graph, documents, relational
 * encoding & ecoding data
+* 
+| UI | Plumbing | Persistence |
+| :--- | :--- | :--- |
+| Table View | JSON  | Bundle |
+| Collection View |  | User Defaults |
+| SwiftUI |  | File System |
+|  |  | Document Based |
+|  |  | Core Data |
+|  |  | Firebase |
+|  |  | REST API |
+|  |  | GraphQL |
 
