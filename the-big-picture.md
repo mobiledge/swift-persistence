@@ -11,8 +11,8 @@ TOPICS
 | UI | Plumbing | Persistence |
 | :--- | :--- | :--- |
 | Table View | JSON  | Bundle |
-| Collection View |  | User Defaults |
-| SwiftUI |  | File System |
+| Collection View | Combine | User Defaults |
+| SwiftUI | Unit Testing | File System |
 |  |  | Document Based |
 |  |  | Core Data |
 |  |  | Firebase |
